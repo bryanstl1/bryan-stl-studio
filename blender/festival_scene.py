@@ -63,7 +63,15 @@ nodes=fog.node_tree.nodes;nodes.clear();out=nodes.new('ShaderNodeOutputMaterial'
 vol.inputs['Density'].default_value=.012;vol.inputs['Color'].default_value=(.2,.25,.4,1)
 fog.node_tree.links.new(vol.outputs['Volume'],out.inputs['Volume'])
 cube('Atmospheric volume',(0,0,9),(48,80,22),fog)
-if '--full' in sys.argv:
+os.makedirs('output',exist_ok=True)
+bpy.ops.wm.save_as_mainfile(filepath=os.path.abspath('output/festival-v04.blend'))
+if '--preview' in sys.argv:
+ s.render.resolution_percentage=25
+ s.cycles.samples=8
+ s.frame_set(90)
+ s.render.filepath=os.path.abspath('output/blender-preview.png')
+ bpy.ops.render.render(write_still=True)
+elif '--full' in sys.argv:
  os.makedirs('output/blender',exist_ok=True)
  s.render.filepath=os.path.abspath('output/blender/frame_');bpy.ops.render.render(animation=True)
 else:
