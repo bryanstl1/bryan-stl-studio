@@ -1,0 +1,33 @@
+name: Blender preview v0.4
+on:
+  workflow_dispatch:
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender
+          blender --version
+      - name: Validate Blender script syntax
+        run: python -m py_compile blender/festival_scene.py
+      - name: Render low-cost preview
+        run: blender -b -t 2 --python blender/festival_scene.py -- --preview
+      - name: Check preview exists
+        run: |
+          test -s output/blender-preview.png
+          test -s output/festival-v04.blend
+          file output/blender-preview.png
+      - name: Upload preview
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bryan-stl-blender-v04-preview
+          path: |
+            output/blender-preview.png
+            output/festival-v04.blend
+          if-no-files-found: warn
+          retention-days: 7
