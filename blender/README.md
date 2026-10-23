@@ -1,7 +1,27 @@
-# Motor Blender experimental
+# BRYAN.STL STUDIO — Blender v0.4 (experimental)
 
-`blender -b -t 4 --python blender/festival_scene.py` genera una imagen de prueba a resolución nativa 1080×1920. Con `-- --full` intenta renderizar 240 fotogramas PNG en `output/blender/`. Se utiliza Cycles, materiales de nodos, iluminación animada, cámara 3D y personajes geométricos articulados de manera básica.
+El motor experimental conserva el renderizador v0.3 sin cambios.
 
-**Estado:** código publicado y sintaxis Python comprobada, pero **no ejecutado en Blender** en el entorno actual, que carece de Blender. No existe todavía MP4 de este motor. El código puede necesitar ajustes de compatibilidad al ejecutarse en Blender 4.x. La prueba no incluye por ahora onda sonora volumétrica, audio ni composición final. No ejecutar render completo en GitHub Actions sin medir primero duración y consumo de recursos.
+## Ejecutar con Blender 4.x
 
-Se conserva `src/render_v03.py` como renderizador alternativo.
+Desde la raíz del repositorio:
+
+```bash
+blender -b -t 4 --python blender/festival_scene.py -- --preview
+```
+
+Genera `output/blender-preview.png` a 25 % de resolución para comprobar iluminación, encuadre y compatibilidad, y guarda `output/festival-v04.blend` para inspección. El modo sin argumentos genera un fotograma a resolución nativa 1080×1920 con Cycles, que puede ser costoso.
+
+Solo después de aprobar el fotograma:
+
+```bash
+blender -b -t 4 --python blender/festival_scene.py -- --full
+```
+
+El modo full escribe secuencia de 240 PNG en `output/blender/`. **Todavía no compone MP4 ni integra audio; no confundir secuencia de fotogramas con entrega audiovisual final.** Se deben evaluar tiempo de render y cuotas antes de automatizar 240 fotogramas en GitHub Actions.
+
+## Verificación actual
+
+Código publicado. No se completó un render con Blender en el entorno de ChatGPT: el ejecutable `blender` y `bpy` no están instalados, y la tentativa de acceder a los paquetes del sistema agotó el tiempo disponible. Pendientes la verificación de compatibilidad Blender 4.x, prueba visual, cálculo de coste y exportación a video.
+
+La geometría de la multitud todavía es simplificada; no es rigging de personajes realista.
