@@ -1,0 +1,33 @@
+name: Blender preview v0.5
+on:
+  workflow_dispatch:
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender
+          blender --version
+      - name: Check script
+        run: python -m py_compile blender/festival_v05.py
+      - name: Render preview v0.5
+        run: blender -b -t 2 --python blender/festival_v05.py -- --preview
+      - name: Verify real files
+        run: |
+          test -s output/blender-preview-v05.png
+          test -s output/festival-v05.blend
+          file output/blender-preview-v05.png
+      - name: Upload preview
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bryan-stl-blender-v05-preview
+          path: |
+            output/blender-preview-v05.png
+            output/festival-v05.blend
+          if-no-files-found: warn
+          retention-days: 7
