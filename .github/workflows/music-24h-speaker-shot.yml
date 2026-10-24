@@ -8,14 +8,14 @@ on:
   workflow_dispatch:
 jobs:
   render:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - name: Install free local render tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y blender ffmpeg libegl1 libgl1 libgl1-mesa-dri
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends blender ffmpeg libegl1 libgl1 libgl1-mesa-dri
           blender --version
       - name: Syntax and scene preview
         run: |
