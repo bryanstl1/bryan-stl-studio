@@ -1,0 +1,45 @@
+name: Cinematic speaker shot
+on:
+  push:
+    branches: [docs/musica-24h-piloto-15s]
+    paths:
+      - blender/music_24h_speaker.py
+      - .github/workflows/music-24h-speaker-shot.yml
+  workflow_dispatch:
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install free local render tools
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends blender ffmpeg libegl1 libgl1 libgl1-mesa-dri
+          blender --version
+      - name: Syntax and scene preview
+        run: |
+          python -m py_compile blender/music_24h_speaker.py
+          blender -b -t 2 --python blender/music_24h_speaker.py -- --preview
+          test -s output/music-24h-3d/speaker-preview.png
+      - name: Render genuine animated frames
+        run: blender -b -t 2 --python blender/music_24h_speaker.py -- --full
+      - name: Encode and check the four-second visual test
+        run: |
+          test "$(find output/music-24h-3d -name 'frame_*.png' | wc -l)" -eq 120
+          ffmpeg -y -v error -framerate 30 -i output/music-24h-3d/frame_%04d.png \
+            -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p \
+            -movflags +faststart output/music-24h-3d/speaker-shot.mp4
+          ffprobe -v error -show_entries stream=width,height,r_frame_rate,nb_frames -show_entries format=duration \
+            -of default=noprint_wrappers=1 output/music-24h-3d/speaker-shot.mp4
+      - name: Upload reviewable scene and editable source
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bryan-stl-speaker-shot-3d
+          path: |
+            output/music-24h-3d/speaker-preview.png
+            output/music-24h-3d/speaker-shot.mp4
+            output/music-24h-3d/speaker-shot.blend
+          if-no-files-found: warn
+          retention-days: 7

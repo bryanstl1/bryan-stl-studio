@@ -17,3 +17,7 @@ Arquitectura modular para guion, storyboard, escenas 3D, motion graphics, audio,
 ## Limitaciones
 
 No hay integración con Blender, TTS, subtítulos automáticos ni publicación. El código actual es una prueba técnica, no el estudio completo.
+
+## Piloto «24 horas sin música»
+
+La producción de 15 s está en `productions/musica-24h/`. `src/music_24h_pilot.py` crea movimiento cuadro por cuadro, una mezcla original y un MP4 de revisión. Tiene voz sintética local de guía, no locución LATAM final, y arte 540×960 escalado; leer el estado y los criterios de QA antes de considerarlo publicable.
