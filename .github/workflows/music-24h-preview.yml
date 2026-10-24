@@ -1,0 +1,24 @@
+name: Speaker still preview
+on:
+  push:
+    branches: [docs/musica-24h-piloto-15s]
+    paths:
+      - .github/workflows/music-24h-preview.yml
+  workflow_dispatch:
+jobs:
+  preview:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender headless
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends blender libegl1 libgl1 libgl1-mesa-dri
+      - name: Render still
+        run: blender -b -t 2 --python blender/music_24h_speaker.py -- --preview
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bryan-stl-speaker-still
+          path: output/music-24h-3d/speaker-preview.png
+          retention-days: 7
